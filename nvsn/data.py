@@ -8,7 +8,7 @@ import os
 import sys
 
 from pyglet import font
-from pyglet import media
+from pyglet import resource
 
 import config
 from common import *
@@ -25,40 +25,5 @@ def guess_data_dir():
 
 DATA_DIR = guess_data_dir()
 font.add_directory(os.path.join(DATA_DIR, "fonts"))
-
-
-def load_file(path, mode="rb"):
-    """Open a file.
-
-    :Parameters:
-        `path` : str
-            The relative path from the data directory to the file.
-        `mode` : str
-            The mode to use when opening the file (default: "rb").
-
-    """
-    file_path = os.path.join(DATA_DIR, path)
-    return open(file_path, mode)
-
-def load_song(path):
-    """Load a music stream from the music directory.
-
-    :Parameters:
-        `path` : str
-            The relative path from the music directory to the file.
-
-    """
-    song_path = os.path.join(DATA_DIR, "music", path)
-    return media.load(song_path)
-
-
-def load_sound(path):
-    """Load a static sound source from the sounds directory.
-
-    :Parameters:
-        `path` : str
-            The relative path from the sounds directory to the file.
-
-    """
-    sound_path = os.path.join(DATA_DIR, "sounds", path)
-    return media.load(sound_path, streaming=False)
+resource.path = [os.path.join(DATA_DIR, subdir) for subdir in ['images', 'music', 'sounds']]
+resource.reindex()

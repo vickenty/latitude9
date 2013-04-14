@@ -19,8 +19,7 @@ import config
 from common import *
 from constants import *
 
-import examples
-
+import gamemode
 
 class Controller(object):
     """Top level controller object.
@@ -151,7 +150,7 @@ class Controller(object):
         """
         self.setup_pyglet()
         self.setup_gl()
-        self.switch_handler("menu")
+        self.switch_handler("game")
         self.window.set_visible()
         app.run()
 
@@ -170,3 +169,6 @@ def main():
         profile.runctx("Controller().run()", globals(), None, filename)
     else:
         Controller().run()
+
+if __name__ == '__main__':
+    main()
