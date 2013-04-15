@@ -70,25 +70,25 @@ class Mode(object):
         """
         self.keys = key.KeyStateHandler()
 
-    def connect(self, control):
-        """Respond to the connecting controller.
+    def connect(self, app):
+        """Respond to the connecting app.
 
         :Parameters:
-            `control` : Controller
-                The connecting Controller object.
+            `app` : App
+                The connecting App object.
 
         """
-        self.control = control
-        self.window = control.window
+        self.app = app
+        self.window = app.window
         self.window.push_handlers(self.keys)
 
     def disconnect(self):
-        """Respond to the disconnecting controller.
+        """Respond to the disconnecting app.
 
         """
         self.window.remove_handlers(self.keys)
         self.window = None
-        self.control = None
+        self.app = None
 
     def tick(self):
         """Process a single tick.

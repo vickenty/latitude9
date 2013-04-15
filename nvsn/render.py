@@ -1,7 +1,11 @@
+from __future__ import division
 import os
 import pyglet
 
 class Tileset (object):
+    w = 16
+    h = 16
+
     def __init__(self):
         self.tiles = {}
 
@@ -29,7 +33,7 @@ class LevelRenderer (object):
         self.group = group
         self.sprites = {}
 
-    def update(self):
+    def think(self):
         for cell in self.level.dirty_list:
             if cell.visible:
                 self.add_tile(cell)
@@ -41,11 +45,31 @@ class LevelRenderer (object):
     def add_tile(self, cell):
         tile = self.tileset[cell.name]
         self.sprites[cell.x, cell.y] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
-        sprite.x = cell.x * 16
-        sprite.y = cell.y * 16
+        sprite.x = cell.x * self.tileset.w
+        sprite.y = cell.y * self.tileset.h
 
     def del_tile(self, cell):
         del self.sprites[cell.x, cell.y]
+
+class PlayerRenderer (object):
+    def __init__(self, player, tileset, batch, group):
+        self.player = player
+        self.tileset = tileset
+        self.batch = batch
+        self.group = group
+
+        self.setup_sprites()
+
+    def setup_sprites(self):
+        tile = self.tileset['player']
+        self.sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
+
+    def think(self):
+        p = self.player
+
+        d = 1 - p.wait / p.walk_delay
+        self.sprite.x = (p.x + p.dx * d) * self.tileset.w
+        self.sprite.y = (p.y + p.dy * d) * self.tileset.h
 
 if __name__ == '__main__':
     import level, data

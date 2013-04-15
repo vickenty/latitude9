@@ -8,9 +8,11 @@ class Cell (object):
 
 class Wall(Cell):
     name = 'wall'
+    walkable = False
 
 class Floor(Cell):
     name = 'floor'
+    walkable = True
 
 class Level (object):
     def __init__(self, w, h):

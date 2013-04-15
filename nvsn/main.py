@@ -21,7 +21,7 @@ from constants import *
 
 import gamemode
 
-class Controller(object):
+class App(object):
     """Top level controller object.
 
     An instance of this represents an instance of the game. There is a brief
@@ -166,9 +166,9 @@ def main():
         import datetime, os, profile
         timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         filename = os.path.join(SCRIPT_DIR, "profile-%s.log" % timestamp)
-        profile.runctx("Controller().run()", globals(), None, filename)
+        profile.runctx("App().run()", globals(), None, filename)
     else:
-        Controller().run()
+        App().run()
 
 if __name__ == '__main__':
     main()
