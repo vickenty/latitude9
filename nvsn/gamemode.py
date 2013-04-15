@@ -18,7 +18,8 @@ class GameMode (mode.Mode):
         lev = level.Dummy(15, 15)
         lev.generate()
         tileset = render.Tileset.get_default()
-        self.renderer = render.LevelRenderer(lev, tileset, self.batch, None)
+        group = pyglet.graphics.OrderedGroup(0)
+        self.renderer = render.LevelRenderer(lev, tileset, self.batch, group)
         self.renderer.update()
 
     def on_draw(self):
