@@ -16,6 +16,14 @@ ORDER_PLAYER = 2
 ORDER_EFFECT = 3
 ORDER_TOP = 4
 
+class VisibilityUpdater (object):
+    def __init__(self, level, player):
+        self.level = level
+        self.player = player
+
+    def think(self):
+        self.level.update_visibility(self.player.nx, self.player.ny)
+
 class GameMode (mode.Mode):
     name = 'game'
 
@@ -33,14 +41,11 @@ class GameMode (mode.Mode):
 
         self.setup_level()
         self.setup_player()
+        self.setup_render()
 
     def setup_level(self):
         self.level = level.Dummy(80, 50)
         self.level.generate()
-
-        group = self.groups[ORDER_LEVEL]
-        renderer = render.LevelRenderer(self.level, self.tileset, self.batch, group)
-        self.queue.append(renderer)
 
     def setup_player(self):
         self.player = player.Player(self.level, 5, 5)
@@ -48,6 +53,13 @@ class GameMode (mode.Mode):
 
         self.control = control.Keyboard(self.player, self.keys)
         self.queue.append(self.control)
+
+    def setup_render(self):
+        self.queue.append(VisibilityUpdater(self.level, self.player))
+
+        group = self.groups[ORDER_LEVEL]
+        renderer = render.LevelRenderer(self.level, self.tileset, self.batch, group)
+        self.queue.append(renderer)
 
         group = self.groups[ORDER_PLAYER]
         renderer = render.PlayerRenderer(self.player, self.tileset, self.batch, group)

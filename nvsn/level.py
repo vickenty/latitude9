@@ -1,7 +1,7 @@
 class Cell (object):
     __slots__ = ['x', 'y', 'visible']
 
-    def __init__(self, x=0, y=0, visible=True):
+    def __init__(self, x=0, y=0, visible=False):
         self.x = x
         self.y = y
         self.visible = visible
@@ -13,6 +13,10 @@ class Wall(Cell):
 class Floor(Cell):
     name = 'floor'
     walkable = True
+
+def clamped_range(center, delta, minv, maxv):
+    delta = int(delta + 0.5)
+    return xrange(max(minv, center - delta), min(maxv, center + delta + 1))
 
 class Level (object):
     def __init__(self, w, h):
@@ -36,6 +40,15 @@ class Level (object):
 
     def wipe(self):
         self.dirty_list = []
+
+    def update_visibility(self, cx, cy, radius=6.5):
+        r2 = radius**2
+        for x in clamped_range(cx, radius, 0, self.w):
+            for y in clamped_range(cy, radius, 0, self.h):
+                cell = self[x, y]
+                if (x - cx)**2 + (y - cy)**2 <= r2 and cell:
+                    cell.visible = True
+                    self.dirty_list.append(cell)
 
 class Dummy (Level):
     def __init__(self, w, h):

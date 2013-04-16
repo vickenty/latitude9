@@ -49,7 +49,10 @@ class LevelRenderer (object):
         sprite.y = cell.y * self.tileset.h
 
     def del_tile(self, cell):
-        del self.sprites[cell.x, cell.y]
+        try:
+            del self.sprites[cell.x, cell.y]
+        except KeyError:
+            pass
 
 class PlayerRenderer (object):
     def __init__(self, player, tileset, batch, group):
