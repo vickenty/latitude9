@@ -5,6 +5,10 @@ class Keyboard (object):
         self.player = player
         self.keys = keys
 
+    def on_key_press(self, sym, mods):
+        if sym == key.Z:
+            self.player.pick_up()
+
     def think(self):
         if self.keys[key.UP]:
             self.player.move(0, 1)

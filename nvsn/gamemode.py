@@ -52,7 +52,9 @@ class GameMode (mode.Mode):
         self.queue.append(self.player)
 
         self.control = control.Keyboard(self.player, self.keys)
-        self.queue.append(self.control)
+
+    def on_key_press(self, sym, mods):
+        self.safe_call(self.control.on_key_press, sym, mods)
 
     def setup_render(self):
         self.queue.append(VisibilityUpdater(self.level, self.player))
@@ -96,4 +98,12 @@ class GameMode (mode.Mode):
         )
 
     def think(self):
+        self.safe_call(self.control.think)
+
         [r.think() for r in self.queue]
+
+    def safe_call(self, func, *args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except player.InventoryError as err:
+            print err.__doc__

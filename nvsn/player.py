@@ -1,7 +1,13 @@
 from __future__ import division
 
-class InventoryFull (Exception):
+class InventoryError (Exception):
     pass
+
+class InventoryFull (InventoryError):
+    '''Inventory full'''
+
+class NothingHere (InventoryError):
+    '''Nothing here to pick up'''
 
 class Inventory (object):
     size = 6
@@ -10,10 +16,10 @@ class Inventory (object):
         self.active = 0
 
     def add(self, item):
-        for i, item in enumerate(self.items):
-            if item is None:
-                self.items[i] = item
-                return i
+        for idx, slot in enumerate(self.items):
+            if slot is None:
+                self.items[idx] = item
+                return
 
         raise InventoryFull()
 
@@ -50,6 +56,20 @@ class Player (object):
             self.ny = ny
 
             self.wait = self.walk_delay
+
+    def pick_up(self):
+        if self.wait > 0:
+            return
+
+        cell = self.level[self.x, self.y]
+
+        if not cell.item:
+            raise NothingHere()
+
+        self.inventory.add(cell.item)
+        cell.item = None
+
+        print self.inventory.items
 
     def think(self):
         if self.wait > 0:
