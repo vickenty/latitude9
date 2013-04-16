@@ -127,9 +127,5 @@ def run(debug=False):
 
 
 if __name__ == "__main__":
-
-    # Change to the game directory
-    os.chdir(os.path.dirname(os.path.join(".", sys.argv[0])))
-
     # Start the actual game
     run()
