@@ -9,6 +9,9 @@ class InventoryFull (InventoryError):
 class NothingHere (InventoryError):
     '''Nothing here to pick up'''
 
+class SlotEmpty (InventoryError):
+    '''Empty slot'''
+
 class Inventory (object):
     size = 6
     def __init__(self):
@@ -23,8 +26,13 @@ class Inventory (object):
 
         raise InventoryFull()
 
-    def select(self, idx):
-        self.active = idx
+    def get(self, slot):
+        item = self.items[slot]
+        if item:
+            self.items[slot] = None
+            return item
+        else:
+            raise SlotEmpty()
 
 class Player (object):
     walk_delay = 8
@@ -69,7 +77,9 @@ class Player (object):
         self.inventory.add(cell.item)
         cell.item = None
 
-        print self.inventory.items
+    def use_item(self, slot):
+        item = self.inventory.get(slot)
+        item.use()
 
     def think(self):
         if self.wait > 0:
