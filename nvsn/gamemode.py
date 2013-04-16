@@ -1,4 +1,7 @@
+from __future__ import division
+
 import pyglet
+from pyglet.gl import *
 import mode
 import config
 
@@ -32,7 +35,7 @@ class GameMode (mode.Mode):
         self.setup_player()
 
     def setup_level(self):
-        self.level = level.Dummy(15, 15)
+        self.level = level.Dummy(80, 50)
         self.level.generate()
 
         group = self.groups[ORDER_LEVEL]
@@ -53,8 +56,31 @@ class GameMode (mode.Mode):
     def on_draw(self):
         self.think()
         self.window.clear()
+        self.setup_view()
         self.batch.draw()
+
+        glLoadIdentity()
         self.fps.draw()
+
+    def setup_view(self):
+        w = self.window.width / 2
+        h = self.window.height / 2
+
+        px = self.player.vx * self.tileset.w
+        py = self.player.vy * self.tileset.h
+
+        maxx = self.level.w * self.tileset.w - w
+        maxy = self.level.h * self.tileset.h - h
+
+        px = min(maxx, max(w, px))
+        py = min(maxy, max(h, py))
+
+        glLoadIdentity()
+        glTranslatef(
+            int(w - px),
+            int(h - py),
+            0,
+        )
 
     def think(self):
         [r.think() for r in self.queue]

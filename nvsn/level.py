@@ -19,6 +19,8 @@ class Level (object):
         self.w = w
         self.h = h
         self.data = [None] * self.w * self.h
+        self.items = []
+
         self.dirty_list = []
 
     def __getitem__(self, key):

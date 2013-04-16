@@ -65,11 +65,8 @@ class PlayerRenderer (object):
         self.sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
 
     def think(self):
-        p = self.player
-
-        d = 1 - p.wait / p.walk_delay
-        self.sprite.x = (p.x + p.dx * d) * self.tileset.w
-        self.sprite.y = (p.y + p.dy * d) * self.tileset.h
+        self.sprite.x = self.player.vx * self.tileset.w
+        self.sprite.y = self.player.vy * self.tileset.h
 
 if __name__ == '__main__':
     import level, data

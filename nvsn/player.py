@@ -1,3 +1,5 @@
+from __future__ import division
+
 class InventoryFull (Exception):
     pass
 
@@ -19,7 +21,7 @@ class Inventory (object):
         self.active = idx
 
 class Player (object):
-    walk_delay = 12
+    walk_delay = 8
 
     def __init__(self, level, x, y):
         self.level = level
@@ -27,8 +29,8 @@ class Player (object):
         self.y = y
         self.inventory = Inventory()
         self.wait = 0
-        self.nx = self.x
-        self.ny = self.y
+        self.nx = self.vx = self.x
+        self.ny = self.vy = self.y
         self.dx = 0
         self.dy = 0
 
@@ -53,9 +55,13 @@ class Player (object):
         if self.wait > 0:
             self.wait -= 1
 
+            d = 1 - self.wait / self.walk_delay
+            self.vx = self.x + d * self.dx
+            self.vy = self.y + d * self.dy
+
         if not self.wait:
-            self.x = self.nx
-            self.y = self.ny
+            self.x = self.vx = self.nx
+            self.y = self.vy = self.ny
             self.dx = 0
             self.dy = 0
 
