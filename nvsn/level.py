@@ -1,7 +1,11 @@
 class Cell (object):
     __slots__ = ['x', 'y', 'visible']
 
-    def __init__(self, x=0, y=0, visible=False):
+    HIDDEN = 0
+    MEMORY = 1
+    LIT = 2
+
+    def __init__(self, x=0, y=0, visible=HIDDEN):
         self.x = x
         self.y = y
         self.visible = visible
@@ -46,8 +50,13 @@ class Level (object):
         for x in clamped_range(cx, radius, 0, self.w):
             for y in clamped_range(cy, radius, 0, self.h):
                 cell = self[x, y]
-                if (x - cx)**2 + (y - cy)**2 <= r2 and cell:
-                    cell.visible = True
+                d2 = (x - cx)**2 + (y - cy)**2
+                if cell:
+                    if d2 <= r2:
+                        cell.visible = cell.LIT
+                    else:
+                        cell.visible = cell.visible and cell.MEMORY
+
                     self.dirty_list.append(cell)
 
 class Dummy (Level):

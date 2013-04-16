@@ -24,8 +24,14 @@ class Tileset (object):
         tileset.add('player')
 
         return tileset
- 
+
 class LevelRenderer (object):
+    visibility_types = {
+        0: 0,
+        1: 127,
+        2: 255
+    }
+
     def __init__(self, level, tileset, batch, group):
         self.level = level
         self.tileset = tileset
@@ -33,12 +39,18 @@ class LevelRenderer (object):
         self.group = group
         self.sprites = {}
 
+        self.build_sprites()
+
+    def build_sprites(self):
+        for x in range(0, self.level.w):
+            for y in range(0, self.level.h):
+                cell = self.level[x, y]
+                self.add_tile(cell)
+
     def think(self):
         for cell in self.level.dirty_list:
-            if cell.visible:
-                self.add_tile(cell)
-            else:
-                self.del_tile(cell)
+            pos = cell.x, cell.y
+            self.sprites[pos].opacity = self.visibility_types[cell.visible]
 
         self.level.wipe()
 
@@ -47,13 +59,6 @@ class LevelRenderer (object):
         self.sprites[cell.x, cell.y] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
         sprite.x = cell.x * self.tileset.w
         sprite.y = cell.y * self.tileset.h
-
-    def del_tile(self, cell):
-        try:
-            self.sprites[cell.x, cell.y].delete()
-            del self.sprites[cell.x, cell.y]
-        except KeyError:
-            pass
 
 class PlayerRenderer (object):
     def __init__(self, player, tileset, batch, group):
