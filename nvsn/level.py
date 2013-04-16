@@ -81,7 +81,7 @@ class Dummy (Level):
         self.place_items()
 
     def place_items(self):
-        cells = filter(None, self.data)
+        cells = [cell for cell in self.data if cell and cell.walkable]
         for i in range(0, 15):
             cell = random.choice(cells)
             cells.remove(cell)
