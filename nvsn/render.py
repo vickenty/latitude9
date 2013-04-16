@@ -50,6 +50,7 @@ class LevelRenderer (object):
 
     def del_tile(self, cell):
         try:
+            self.sprites[cell.x, cell.y].delete()
             del self.sprites[cell.x, cell.y]
         except KeyError:
             pass
@@ -78,10 +79,11 @@ if __name__ == '__main__':
 
     level = level.Dummy(15, 15)
     level.generate()
+    level.update_visibility(7, 7, 7)
 
     batch = pyglet.graphics.Batch()
     renderer = LevelRenderer(level, tileset, batch, None)
-    renderer.update()
+    renderer.think()
 
     win = pyglet.window.Window()
 

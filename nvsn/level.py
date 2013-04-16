@@ -75,6 +75,6 @@ if __name__ == '__main__':
 
     for y in range(0, l.h):
         for x in range(0, l.w):
-            cell = l[x, y] and '*' or ' '
+            cell = isinstance(l[x, y], Wall) and '*' or ' '
             sys.stdout.write(cell)
         sys.stdout.write('\n')
