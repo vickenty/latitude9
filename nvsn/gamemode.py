@@ -13,8 +13,7 @@ import control
 ORDER_LEVEL = 0
 ORDER_ITEMS = 1
 ORDER_PLAYER = 2
-ORDER_EFFECT = 3
-ORDER_TOP = 4
+ORDER_TOP = 3
 
 class VisibilityUpdater (object):
     def __init__(self, level, player):
@@ -30,7 +29,9 @@ class GameMode (mode.Mode):
     def __init__(self):
         super(GameMode, self).__init__()
 
-        self.batch = pyglet.graphics.Batch()
+        self.scroll_batch = pyglet.graphics.Batch()
+        self.static_batch = pyglet.graphics.Batch()
+
         self.groups = [pyglet.graphics.OrderedGroup(o) for o in range(ORDER_TOP)]
 
         self.fps = pyglet.clock.ClockDisplay()
@@ -59,26 +60,44 @@ class GameMode (mode.Mode):
     def setup_render(self):
         self.queue.append(VisibilityUpdater(self.level, self.player))
 
-        renderer = render.LevelRenderer(self.level, self.tileset, self.batch,
+        renderer = render.LevelRenderer(
+                self.level,
+                self.tileset,
+                self.scroll_batch,
                 self.groups[ORDER_LEVEL],
                 self.groups[ORDER_ITEMS])
         self.queue.append(renderer)
 
         group = self.groups[ORDER_PLAYER]
-        renderer = render.PlayerRenderer(self.player, self.tileset, self.batch, group)
+        renderer = render.PlayerRenderer(
+                self.player,
+                self.tileset,
+                self.scroll_batch,
+                self.groups[ORDER_PLAYER])
+        self.queue.append(renderer)
+
+        renderer = render.InventoryRenderer(
+                self.player.inventory,
+                self.tileset,
+                self.static_batch,
+                None)
+
         self.queue.append(renderer)
 
     def on_draw(self):
         self.think()
         self.window.clear()
         self.setup_view()
-        self.batch.draw()
+        self.scroll_batch.draw()
 
         glLoadIdentity()
+        self.static_batch.draw()
+
+        glTranslatef(self.tileset.w * 4, 0, 0)
         self.fps.draw()
 
     def setup_view(self):
-        w = self.window.width / 2
+        w = self.window.width / 2 - self.tileset.w * 2
         h = self.window.height / 2
 
         px = self.player.vx * self.tileset.w
@@ -92,7 +111,7 @@ class GameMode (mode.Mode):
 
         glLoadIdentity()
         glTranslatef(
-            int(w - px),
+            int(w - px + self.tileset.w * 4),
             int(h - py),
             0,
         )

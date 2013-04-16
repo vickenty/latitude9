@@ -87,6 +87,33 @@ class PlayerRenderer (object):
         self.sprite.x = self.player.vx * self.tileset.w
         self.sprite.y = self.player.vy * self.tileset.h
 
+class InventoryRenderer (object):
+    def __init__(self, inventory, tileset, batch, group):
+        self.inventory = inventory
+        self.tileset = tileset
+        self.batch = batch
+        self.group = group
+        self.sprites = {}
+
+    def think(self):
+        sprites = self.sprites
+        for slot, item in enumerate(self.inventory.items):
+
+            if item and slot not in self.sprites:
+                offset = self.tileset.h * (3 * slot + 1)
+                sprites[slot] = self.add_sprite(item.name, offset)
+            if not item and slot in self.sprites:
+                sprites[slot].delete()
+                del sprites[slot]
+
+    def add_sprite(self, name, offset):
+        tile = self.tileset[name]
+        sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
+        sprite.x = self.tileset.w
+        sprite.y = offset
+        sprite.scale = 2
+        return sprite
+
 if __name__ == '__main__':
     import level, data
 
