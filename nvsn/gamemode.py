@@ -57,8 +57,9 @@ class GameMode (mode.Mode):
     def setup_render(self):
         self.queue.append(VisibilityUpdater(self.level, self.player))
 
-        group = self.groups[ORDER_LEVEL]
-        renderer = render.LevelRenderer(self.level, self.tileset, self.batch, group)
+        renderer = render.LevelRenderer(self.level, self.tileset, self.batch,
+                self.groups[ORDER_LEVEL],
+                self.groups[ORDER_ITEMS])
         self.queue.append(renderer)
 
         group = self.groups[ORDER_PLAYER]

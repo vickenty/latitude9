@@ -1,6 +1,8 @@
-class Cell (object):
-    __slots__ = ['x', 'y', 'visible']
+import random
 
+import items
+
+class Cell (object):
     HIDDEN = 0
     MEMORY = 1
     LIT = 2
@@ -9,6 +11,7 @@ class Cell (object):
         self.x = x
         self.y = y
         self.visible = visible
+        self.item = None
 
 class Wall(Cell):
     name = 'wall'
@@ -27,7 +30,6 @@ class Level (object):
         self.w = w
         self.h = h
         self.data = [None] * self.w * self.h
-        self.items = []
 
         self.dirty_list = []
 
@@ -75,6 +77,15 @@ class Dummy (Level):
         for x in range(1, self.w - 1):
             for y in range(1, self.h - 1):
                 self[x, y] = Floor()
+
+        self.place_items()
+
+    def place_items(self):
+        cells = filter(None, self.data)
+        for i in range(0, 15):
+            cell = random.choice(cells)
+            cells.remove(cell)
+            cell.item = items.Item()
 
 if __name__ == '__main__':
     import sys
