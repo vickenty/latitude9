@@ -27,6 +27,12 @@ class Tileset (object):
         tileset.add('shovel')
         tileset.add('pit')
         tileset.add('trap')
+        tileset.add('gem1')
+        tileset.add('gem2')
+        tileset.add('gem3')
+        tileset.add('flower1')
+        tileset.add('flower2')
+        tileset.add('flower3')
 
         return tileset
 

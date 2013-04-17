@@ -88,6 +88,11 @@ class Dummy (Level):
             cells.remove(cell)
             cell.item = items.Shovel()
 
+        for kind in items.GoalItem.types:
+            cell = random.choice(cells)
+            cells.remove(cell)
+            cell.item = items.GoalItem(kind)
+
 if __name__ == '__main__':
     import sys
 

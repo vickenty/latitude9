@@ -9,6 +9,17 @@ class TrapItem (Item):
     def use(self, player, level, cell):
         cell.trap = self.trap_class(player)
 
+class GoalItem (Item):
+    """Droppable item."""
+
+    types = ['%s%d' % (kind, seq) for seq in range(1, 4) for kind in ['flower', 'gem']]
+
+    def __init__(self, name):
+        self.name = name
+
+    def use(self, player, level, cell):
+        cell.item = self
+
 class Trap (object):
     """Subclass this."""
     def __init__(self, owner):
