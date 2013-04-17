@@ -86,7 +86,7 @@ class Dummy (Level):
         for i in range(0, 15):
             cell = random.choice(cells)
             cells.remove(cell)
-            cell.item = items.Item()
+            cell.item = items.Shovel()
 
 if __name__ == '__main__':
     import sys

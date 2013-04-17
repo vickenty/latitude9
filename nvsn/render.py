@@ -24,7 +24,8 @@ class Tileset (object):
         tileset.add('wall')
         tileset.add('floor')
         tileset.add('player')
-        tileset.add('item')
+        tileset.add('shovel')
+        tileset.add('pit')
         tileset.add('trap')
 
         return tileset
