@@ -12,6 +12,7 @@ class Cell (object):
         self.y = y
         self.visible = visible
         self.item = None
+        self.trap = None
 
 class Wall(Cell):
     name = 'wall'

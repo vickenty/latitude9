@@ -79,7 +79,7 @@ class Player (object):
 
     def use_item(self, slot):
         item = self.inventory.get(slot)
-        item.use()
+        item.use(self, self.level, self.level[self.x, self.y])
 
     def think(self):
         if self.wait > 0:
@@ -89,9 +89,23 @@ class Player (object):
             self.vx = self.x + d * self.dx
             self.vy = self.y + d * self.dy
 
-        if not self.wait:
+        if not self.wait and (self.dx or self.dy):
             self.x = self.vx = self.nx
             self.y = self.vy = self.ny
             self.dx = 0
             self.dy = 0
+
+            self.check_trap()
+
+    def freeze(self, time):
+        self.wait = time
+
+    def die(self):
+        pass
+
+    def check_trap(self):
+        cell = self.level[self.x, self.y]
+        if cell.trap:
+            cell.trap.affect(self)
+            cell.trap = None
 

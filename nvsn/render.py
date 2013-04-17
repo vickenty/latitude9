@@ -25,6 +25,7 @@ class Tileset (object):
         tileset.add('floor')
         tileset.add('player')
         tileset.add('item')
+        tileset.add('trap')
 
         return tileset
 
@@ -35,7 +36,8 @@ class LevelRenderer (object):
         2: 255
     }
 
-    def __init__(self, level, tileset, batch, tiles_group, items_group):
+    def __init__(self, owner, level, tileset, batch, tiles_group, items_group):
+        self.owner = owner
         self.level = level
         self.tileset = tileset
         self.batch = batch
@@ -50,15 +52,19 @@ class LevelRenderer (object):
         for x in range(0, self.level.w):
             for y in range(0, self.level.h):
                 cell = self.level[x, y]
-                self.add_tile(self.sprites, cell.name, cell)
+                self.add_tile(self.sprites, cell.name, (x, y))
 
     def think(self):
         for cell in self.level.dirty_list:
             pos = cell.x, cell.y
             self.sprites[pos].opacity = self.visibility_types[cell.visible]
-            if cell.visible == cell.LIT and cell.item:
-                if pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.item.name, cell)
+            if cell.visible == cell.LIT and (cell.item or cell.trap):
+                if cell.item and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.item.name, pos)
+
+                if cell.trap and cell.trap.owner == self.owner and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.trap.name, pos)
+
             else:
                 if pos in self.item_sprites:
                     self.item_sprites[pos].delete()
@@ -66,11 +72,11 @@ class LevelRenderer (object):
 
         self.level.wipe()
 
-    def add_tile(self, container, name, cell):
+    def add_tile(self, container, name, pos):
         tile = self.tileset[name]
-        container[cell.x, cell.y] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.tiles_group)
-        sprite.x = cell.x * self.tileset.w
-        sprite.y = cell.y * self.tileset.h
+        container[pos] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.tiles_group)
+        sprite.x = pos[0] * self.tileset.w
+        sprite.y = pos[1] * self.tileset.h
 
 class PlayerRenderer (object):
     def __init__(self, player, tileset, batch, group):

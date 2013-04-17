@@ -61,6 +61,7 @@ class GameMode (mode.Mode):
         self.queue.append(VisibilityUpdater(self.level, self.player))
 
         renderer = render.LevelRenderer(
+                self.player,
                 self.level,
                 self.tileset,
                 self.scroll_batch,
