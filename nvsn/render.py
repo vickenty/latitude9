@@ -1,6 +1,7 @@
 from __future__ import division
 import os
 import pyglet
+from pyglet.gl import *
 
 class Tileset (object):
     w = 16
@@ -11,6 +12,7 @@ class Tileset (object):
 
     def add(self, name):
         texture = pyglet.resource.image(name + '.png')
+        glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         self.tiles[name] = texture
 
     def __getitem__(self, name):
