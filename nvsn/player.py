@@ -12,6 +12,9 @@ class NothingHere (InventoryError):
 class SlotEmpty (InventoryError):
     '''Empty slot'''
 
+class SpaceUsed (InventoryError):
+    '''There's already something here.'''
+
 class Inventory (object):
     size = 6
     def __init__(self):
@@ -78,8 +81,13 @@ class Player (object):
         cell.item = None
 
     def use_item(self, slot):
+        cell = self.level[self.x, self.y]
+
+        if cell.item or cell.trap:
+            raise SpaceUsed()
+
         item = self.inventory.get(slot)
-        item.use(self, self.level, self.level[self.x, self.y])
+        item.use(self, self.level, cell)
 
     def think(self):
         if self.wait > 0:
