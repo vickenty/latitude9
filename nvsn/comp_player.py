@@ -44,11 +44,11 @@ class ComputerPlayer:
         high_pri = -1
         min_distance  = 0
         if (move_list[0] == 1):
-            if (min_distance > self.player.distance_between(final_x,final_y)
+            if (min_distance > self.player.distance_between(final_x,final_y)):
                 high_pri = 0        
             
         if (move_list[1] == 1):
-            if (min_distance > self.player.distance_between(final_x,final_y):
+            if (min_distance > self.player.distance_between(final_x,final_y)):
                 high_pri = 1
         
         if (move_list[2] == 1):
