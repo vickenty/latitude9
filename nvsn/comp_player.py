@@ -94,18 +94,6 @@ class ComputerPlayer:
         return (is_part_of_wall(x_pos,y_pos))  
 
 
-    def go_there(self,nx,ny,visited_nodes):
-        x = self.player.x
-        y = self.player.y
-
-        if (x,y) in visted_nodes:
-            return visited_nodes
-
-
-    def distance_between(start,end):
-        if start == end:
-            return 0
-        else if 
 
     def dijkstra(self,nx,ny):
         start_cell = Cell(cur_x,cur_y)
@@ -113,11 +101,11 @@ class ComputerPlayer:
         visited_cells = {};
         distance = {}
         visited_cells[start_cell] = 1
-        distance{start_cell} = 0
+        distance[start_cell] = 0
         previous = {}
 
         for cell in visited_cells:
-            if cell == end:
+            if cell == end_cell:
                 break
             neighbour_nodes = cell.neighbours(cur_x, cur_y)
             for neighbour_cell in neighbour_nodes:   
@@ -126,20 +114,10 @@ class ComputerPlayer:
                     if cur_distance < distance[neighbour_cell]:
                         distance[neighbour_cell] = cur_distance
                         previous[neighbour_cell] = cell
-                elif !visited_cells.has_key(neighbor_cell):
+                elif not visited_cells.has_key(neighbor_cell):
                     visited_cells[neighbour_cell] = 1
                     distance[neighbour_cell] = cur_distance
                     previous[neighbour_cell] = cell
 
 
-         return distance,previous 
-                        
-                        
-                            
-                    
-                
-            
-           
-        
-        
-        
+        return distance,previous 
