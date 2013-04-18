@@ -102,6 +102,32 @@ class PlayerRenderer (object):
         self.sprite.x = self.player.vx * self.tileset.w
         self.sprite.y = self.player.vy * self.tileset.h
 
+class QuestRenderer (object):
+    def __init__(self, quest, inventory, tileset, batch, group):
+        self.quest = quest
+        self.inventory = inventory
+        self.tileset = tileset
+        self.batch = batch
+        self.group = group
+
+        self.sprites = []
+
+        self.build()
+
+    def build(self):
+        for slot, name in enumerate(self.quest.goals):
+            tile = self.tileset[name]
+            sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
+            sprite.x = self.tileset.w
+            sprite.y = self.tileset.h * (3 * slot + 20)
+            sprite.scale = 2
+            self.sprites.append(sprite)
+
+    def think(self):
+        has = set(i.name for i in self.inventory.items if i)
+        for slot, name in enumerate(self.quest.goals):
+            self.sprites[slot].opacity = 127 + 127 * (name in has)
+
 class InventoryRenderer (object):
     def __init__(self, inventory, tileset, batch, group):
         self.inventory = inventory

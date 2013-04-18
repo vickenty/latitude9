@@ -9,6 +9,7 @@ import level
 import render
 import player
 import control
+import quest
 
 ORDER_LEVEL = 0
 ORDER_ITEMS = 1
@@ -45,8 +46,10 @@ class GameMode (mode.Mode):
         self.setup_render()
 
     def setup_level(self):
-        self.level = level.Dummy(80, 50)
+        self.level = level.Dummy(20, 20)
         self.level.generate()
+
+        self.quest = quest.Quest.new_random()
 
     def setup_player(self):
         self.player = player.Player(self.level, 5, 5)
@@ -82,7 +85,14 @@ class GameMode (mode.Mode):
                 self.tileset,
                 self.static_batch,
                 None)
+        self.queue.append(renderer)
 
+        renderer = render.QuestRenderer(
+                self.quest,
+                self.player.inventory,
+                self.tileset,
+                self.static_batch,
+                None)
         self.queue.append(renderer)
 
     def on_draw(self):
