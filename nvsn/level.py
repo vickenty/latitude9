@@ -15,6 +15,7 @@ class Cell (object):
         self.visible = visible
         self.item = None
         self.trap = None
+        self.neighbors = []
 
     def enter(self, player):
         if self.trap:
@@ -102,6 +103,7 @@ class Dummy (Level):
                     self[x, y] = tile()
 
         self.place_items()
+        self.build_graph()
 
     def place_items(self):
         cells = [cell for cell in self.data if cell and cell.walkable]
@@ -114,6 +116,21 @@ class Dummy (Level):
             cell = random.choice(cells)
             cells.remove(cell)
             cell.item = items.GoalItem(kind)
+
+    def build_graph(self):
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+        for cell in self.data:
+            if not cell:
+                continue
+
+            for dx, dy in directions:
+                x = cell.x + dx
+                y = cell.y + dy
+                if 0 <= x < self.w and 0 <= y < self.h:
+                    neigh = self[cell.x + dx, cell.y + dy]
+                    if neigh.walkable:
+                        cell.neighbors.append(neigh)
 
 if __name__ == '__main__':
     import sys
