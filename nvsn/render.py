@@ -46,6 +46,7 @@ class LevelRenderer (object):
 
     def __init__(self, owner, level, tileset, batch, tiles_group, items_group):
         self.owner = owner
+        self.visibility = owner.visibility
         self.level = level
         self.tileset = tileset
         self.batch = batch
@@ -63,24 +64,28 @@ class LevelRenderer (object):
                 self.add_tile(self.sprites, cell.name, (x, y))
 
     def think(self):
-        for cell in self.level.dirty_list:
+        for cell in self.visibility.dirty_list:
             pos = cell.x, cell.y
-            self.sprites[pos].opacity = self.visibility_types[cell.visible]
-            if cell.visible == cell.LIT and (cell.item or cell.trap):
+            vis = self.visibility[cell]
+            self.sprites[pos].opacity = self.visibility_types[vis]
+
+            if vis == cell.LIT and (cell.item or cell.trap):
                 if cell.item and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.item.name, pos)
+                    self.add_tile(self.item_sprites, cell.item.name, pos, self.items_group)
 
                 if cell.trap and cell.trap.owner == self.owner and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.trap.name, pos)
+                    self.add_tile(self.item_sprites, cell.trap.name, pos, self.items_group)
 
             else:
                 if pos in self.item_sprites:
                     self.item_sprites[pos].delete()
                     del self.item_sprites[pos]
 
-        self.level.wipe()
+        self.visibility.wipe()
 
-    def add_tile(self, container, name, pos):
+    def add_tile(self, container, name, pos, group=None):
+        if not group:
+            group = self.tiles_group
         tile = self.tileset[name]
         container[pos] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.tiles_group)
         sprite.x = pos[0] * self.tileset.w

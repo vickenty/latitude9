@@ -9,10 +9,9 @@ class Cell (object):
 
     walkable = False
 
-    def __init__(self, x=0, y=0, visible=HIDDEN):
+    def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
-        self.visible = visible
         self.item = None
         self.trap = None
         self.neighbors = []
@@ -21,6 +20,44 @@ class Cell (object):
         if self.trap:
             self.trap.affect(player)
             self.trap = None
+
+    def __repr__(self):
+        return '<%d, %d>' % (self.x, self.y)
+
+class Visibility (dict):
+    def __init__(self, level, default=Cell.HIDDEN):
+        super(Visibility, self).__init__()
+        self.level = level
+        self.w = level.w
+        self.h = level.h
+        self.frontier = set()
+        self.update(dict((cell, default) for cell in level.data))
+        self.dirty_list = self.keys()
+
+    def update_visibility(self, cx, cy, radius=6.5):
+        r2 = radius**2
+        for x in clamped_range(cx, radius, 0, self.w):
+            for y in clamped_range(cy, radius, 0, self.h):
+                cell = self.level[x, y]
+                d2 = (x - cx)**2 + (y - cy)**2
+                if cell:
+                    if d2 <= r2:
+                        self[cell] = cell.LIT
+                        self.update_frontier(cell)
+                    else:
+                        self[cell] = self[cell] and cell.MEMORY
+
+                    self.dirty_list.append(cell)
+
+    def update_frontier(self, cell):
+        if cell in self.frontier:
+            self.frontier.remove(cell)
+        for neigh in cell.neighbors:
+            if self[neigh] == cell.HIDDEN:
+                self.frontier.add(neigh)
+
+    def wipe(self):
+        self.dirty_list = []
 
 class Wall(Cell):
     name = 'wall'
@@ -47,35 +84,15 @@ class Level (object):
         self.h = h
         self.data = [None] * self.w * self.h
 
-        self.dirty_list = []
-
     def __getitem__(self, key):
         return self.data[self.offset(*key)]
 
     def __setitem__(self, key, cell):
         cell.x, cell.y = key
         self.data[self.offset(*key)] = cell
-        self.dirty_list.append(cell)
 
     def offset(self, x, y):
         return y * self.w + x
-
-    def wipe(self):
-        self.dirty_list = []
-
-    def update_visibility(self, cx, cy, radius=6.5):
-        r2 = radius**2
-        for x in clamped_range(cx, radius, 0, self.w):
-            for y in clamped_range(cy, radius, 0, self.h):
-                cell = self[x, y]
-                d2 = (x - cx)**2 + (y - cy)**2
-                if cell:
-                    if d2 <= r2:
-                        cell.visible = cell.LIT
-                    else:
-                        cell.visible = cell.visible and cell.MEMORY
-
-                    self.dirty_list.append(cell)
 
 class Dummy (Level):
     def __init__(self, w, h):

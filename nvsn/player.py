@@ -43,8 +43,9 @@ class Inventory (object):
 class Player (object):
     walk_delay = 8
 
-    def __init__(self, level, quest, x, y):
+    def __init__(self, level, visibility, quest, x, y):
         self.level = level
+        self.visibility = visibility
         self.quest = quest
         self.x = x
         self.y = y
@@ -55,6 +56,7 @@ class Player (object):
         self.dx = 0
         self.dy = 0
         self.won = False
+        self.quest_done = False
 
     def move(self, dx, dy):
         if self.wait > 0:

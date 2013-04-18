@@ -22,7 +22,7 @@ class VisibilityUpdater (object):
         self.player = player
 
     def think(self):
-        self.level.update_visibility(self.player.nx, self.player.ny)
+        self.player.visibility.update_visibility(self.player.nx, self.player.ny)
 
 class GameMode (mode.Mode):
     name = 'game'
@@ -52,7 +52,8 @@ class GameMode (mode.Mode):
         self.quest = quest.Quest.new_random()
 
     def setup_player(self):
-        self.player = player.Player(self.level, self.quest, 5, 5)
+        visibility = level.Visibility(self.level)
+        self.player = player.Player(self.level, visibility, self.quest, 5, 5)
         self.queue.append(self.player)
 
         self.control = control.Keyboard(self.player, self.keys)
