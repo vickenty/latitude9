@@ -33,8 +33,18 @@ class Pit (Trap):
     delay = 120
 
     def affect(self, player):
-        player.freeze(self.delay)
+        player.freeze(delay)
+
+class Mine (Trap):
+    name = 'mine'
+
+    def affect(self, player):
+        player.die()
 
 class Shovel (TrapItem):
     name = "shovel"
     trap_class = Pit
+
+class MineKit (TrapItem):
+    name = 'minekit'
+    trap_class = Mine

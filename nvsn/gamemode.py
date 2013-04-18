@@ -16,14 +16,6 @@ ORDER_ITEMS = 1
 ORDER_PLAYER = 2
 ORDER_TOP = 3
 
-class VisibilityUpdater (object):
-    def __init__(self, level, player):
-        self.level = level
-        self.player = player
-
-    def think(self):
-        self.player.visibility.update_visibility(self.player.nx, self.player.ny)
-
 class GameMode (mode.Mode):
     name = 'game'
 
@@ -62,8 +54,6 @@ class GameMode (mode.Mode):
         self.safe_call(self.control.on_key_press, sym, mods)
 
     def setup_render(self):
-        self.queue.append(VisibilityUpdater(self.level, self.player))
-
         renderer = render.LevelRenderer(
                 self.player,
                 self.level,

@@ -34,7 +34,7 @@ class Visibility (dict):
         self.update(dict((cell, default) for cell in level.data))
         self.dirty_list = self.keys()
 
-    def update_visibility(self, cx, cy, radius=6.5):
+    def update_visibility(self, cx, cy, radius=6.5, cansee=True):
         r2 = radius**2
         for x in clamped_range(cx, radius, 0, self.w):
             for y in clamped_range(cy, radius, 0, self.h):
@@ -42,7 +42,7 @@ class Visibility (dict):
                 d2 = (x - cx)**2 + (y - cy)**2
                 if cell:
                     if d2 <= r2:
-                        self[cell] = cell.LIT
+                        self[cell] = cell.LIT if cansee else cell.MEMORY
                         self.update_frontier(cell)
                     else:
                         self[cell] = self[cell] and cell.MEMORY
@@ -124,10 +124,11 @@ class Dummy (Level):
 
     def place_items(self):
         cells = [cell for cell in self.data if cell and cell.walkable]
+        arsenal = [items.Shovel, items.MineKit]
         for i in range(0, 15):
             cell = random.choice(cells)
             cells.remove(cell)
-            cell.item = items.Shovel()
+            cell.item = random.choice(arsenal)()
 
         for kind in items.GoalItem.types:
             cell = random.choice(cells)

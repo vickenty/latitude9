@@ -34,6 +34,8 @@ class Tileset (object):
         tileset.add('flower2')
         tileset.add('flower3')
         tileset.add('exit')
+        tileset.add('mine')
+        tileset.add('minekit')
 
         return tileset
 
