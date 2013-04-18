@@ -40,7 +40,7 @@ class ComputerPlayer:
     def priortize_legal_moves(self):
         move_list = self.legal_moves
 
-        final_x,final_y = self.player.current_objective
+        final_x,final_y = self.player.next_goal
         high_pri = -1
         min_distance  = 0
         if (move_list[0] == 1):
@@ -92,5 +92,54 @@ class ComputerPlayer:
             return 0
 
         return (is_part_of_wall(x_pos,y_pos))  
+
+
+    def go_there(self,nx,ny,visited_nodes):
+        x = self.player.x
+        y = self.player.y
+
+        if (x,y) in visted_nodes:
+            return visited_nodes
+
+
+    def distance_between(start,end):
+        if start == end:
+            return 0
+        else if 
+
+    def dijkstra(self,nx,ny):
+        start_cell = Cell(cur_x,cur_y)
+        end_cell = Cell(nx,ny)
+        visited_cells = {};
+        distance = {}
+        visited_cells[start_cell] = 1
+        distance{start_cell} = 0
+        previous = {}
+
+        for cell in visited_cells:
+            if cell == end:
+                break
+            neighbour_nodes = cell.neighbours(cur_x, cur_y)
+            for neighbour_cell in neighbour_nodes:   
+                cur_distance = distance[cell] + 1
+                if distance.has_key(neighbour_cell):
+                    if cur_distance < distance[neighbour_cell]:
+                        distance[neighbour_cell] = cur_distance
+                        previous[neighbour_cell] = cell
+                elif !visited_cells.has_key(neighbor_cell):
+                    visited_cells[neighbour_cell] = 1
+                    distance[neighbour_cell] = cur_distance
+                    previous[neighbour_cell] = cell
+
+
+         return distance,previous 
+                        
+                        
+                            
+                    
+                
+            
+           
+        
         
         
