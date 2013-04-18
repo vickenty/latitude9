@@ -22,7 +22,7 @@ class Cell (object):
             self.trap = None
 
     def __repr__(self):
-        return '<%d, %d>' % (self.x, self.y)
+        return '<%s: %d, %d>' % (self.name, self.x, self.y)
 
 class Visibility (dict):
     def __init__(self, level, default=Cell.HIDDEN):
@@ -33,6 +33,7 @@ class Visibility (dict):
         self.frontier = set()
         self.update(dict((cell, default) for cell in level.data))
         self.dirty_list = self.keys()
+        self.items = {}
 
     def update_visibility(self, cx, cy, radius=6.5, cansee=True):
         r2 = radius**2
@@ -44,17 +45,23 @@ class Visibility (dict):
                     if d2 <= r2:
                         self[cell] = cell.LIT if cansee else cell.MEMORY
                         self.update_frontier(cell)
+                        if cell.item:
+                            self.items[cell] = cell.item
+                        elif cell in self.items:
+                            del self.items[cell]
                     else:
                         self[cell] = self[cell] and cell.MEMORY
+                        if cell in self.items:
+                            del self.items[cell]
 
                     self.dirty_list.append(cell)
 
     def update_frontier(self, cell):
-        if cell in self.frontier:
+        front = any(self[n] == cell.HIDDEN for n in cell.neighbors)
+        if front:
+            self.frontier.add(cell)
+        elif cell in self.frontier:
             self.frontier.remove(cell)
-        for neigh in cell.neighbors:
-            if self[neigh] == cell.HIDDEN:
-                self.frontier.add(neigh)
 
     def wipe(self):
         self.dirty_list = []
@@ -119,6 +126,9 @@ class Dummy (Level):
                         tile = Floor
                     self[x, y] = tile()
 
+                    if tile == ExitArea:
+                        self.exit = self[x, y]
+
         self.place_items()
         self.build_graph()
 
@@ -147,8 +157,7 @@ class Dummy (Level):
                 y = cell.y + dy
                 if 0 <= x < self.w and 0 <= y < self.h:
                     neigh = self[cell.x + dx, cell.y + dy]
-                    if neigh.walkable:
-                        cell.neighbors.append(neigh)
+                    cell.neighbors.append(neigh)
 
 if __name__ == '__main__':
     import sys
