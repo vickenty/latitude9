@@ -37,11 +37,15 @@ class Inventory (object):
         else:
             raise SlotEmpty()
 
+    def item_types(self):
+        return set(i.name for i in self.items if i)
+
 class Player (object):
     walk_delay = 8
 
-    def __init__(self, level, x, y):
+    def __init__(self, level, quest, x, y):
         self.level = level
+        self.quest = quest
         self.x = x
         self.y = y
         self.inventory = Inventory()
@@ -50,6 +54,7 @@ class Player (object):
         self.ny = self.vy = self.y
         self.dx = 0
         self.dy = 0
+        self.won = False
 
     def move(self, dx, dy):
         if self.wait > 0:
@@ -80,6 +85,8 @@ class Player (object):
         self.inventory.add(cell.item)
         cell.item = None
 
+        self.update_quest_status()
+
     def use_item(self, slot):
         cell = self.level[self.x, self.y]
 
@@ -88,6 +95,12 @@ class Player (object):
 
         item = self.inventory.get(slot)
         item.use(self, self.level, cell)
+
+        self.update_quest_status()
+
+    def update_quest_status(self):
+        has = self.inventory.item_types()
+        self.quest_done = all(goal in has for goal in self.quest.goals)
 
     def think(self):
         if self.wait > 0:
@@ -103,17 +116,13 @@ class Player (object):
             self.dx = 0
             self.dy = 0
 
-            self.check_trap()
+            self.level[self.x, self.y].enter(self)
 
     def freeze(self, time):
         self.wait = time
 
+    def win(self):
+        self.won = True
+
     def die(self):
         pass
-
-    def check_trap(self):
-        cell = self.level[self.x, self.y]
-        if cell.trap:
-            cell.trap.affect(self)
-            cell.trap = None
-

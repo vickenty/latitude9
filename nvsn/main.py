@@ -20,6 +20,7 @@ from common import *
 from constants import *
 
 import gamemode
+import modes
 
 class App(object):
     """Top level controller object.
@@ -42,6 +43,7 @@ class App(object):
         return self._handler
 
     def set_handler(self, value):
+        glLoadIdentity()
         if self._handler is not None:
             self._handler.disconnect()
             self.window.pop_handlers()

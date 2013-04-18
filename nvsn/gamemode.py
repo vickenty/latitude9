@@ -52,7 +52,7 @@ class GameMode (mode.Mode):
         self.quest = quest.Quest.new_random()
 
     def setup_player(self):
-        self.player = player.Player(self.level, 5, 5)
+        self.player = player.Player(self.level, self.quest, 5, 5)
         self.queue.append(self.player)
 
         self.control = control.Keyboard(self.player, self.keys)
@@ -97,6 +97,9 @@ class GameMode (mode.Mode):
 
     def on_draw(self):
         self.think()
+        if not self.window:
+            return
+
         self.window.clear()
         self.setup_view()
         self.scroll_batch.draw()
@@ -131,6 +134,9 @@ class GameMode (mode.Mode):
         self.safe_call(self.control.think)
 
         [r.think() for r in self.queue]
+
+        if self.player.won:
+            self.app.switch_handler('win')
 
     def safe_call(self, func, *args, **kwargs):
         try:

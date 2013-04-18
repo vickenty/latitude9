@@ -33,6 +33,7 @@ class Tileset (object):
         tileset.add('flower1')
         tileset.add('flower2')
         tileset.add('flower3')
+        tileset.add('exit')
 
         return tileset
 
@@ -124,7 +125,7 @@ class QuestRenderer (object):
             self.sprites.append(sprite)
 
     def think(self):
-        has = set(i.name for i in self.inventory.items if i)
+        has = self.inventory.item_types()
         for slot, name in enumerate(self.quest.goals):
             self.sprites[slot].opacity = 127 + 127 * (name in has)
 
