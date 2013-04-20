@@ -41,7 +41,7 @@ class GameMode (mode.Mode):
         self.setup_music()
 
     def setup_level(self):
-        self.level = dungeon.Dungeon(50, 50, targetRatio = 0.25, seed = 1818238163)
+        self.level = dungeon.Dungeon(80, 50, targetRatio = 0.25)
         self.level.generate()
 
         self.quest = quest.Quest.new_random()

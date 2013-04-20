@@ -3,7 +3,7 @@ import items
 
 kVoid, kWall, kRoom, kDoor, kExit = constants = [0] + [1 << i for i in range(4)]
 kWalkable = kRoom | kDoor | kExit
-kCellNames = {kVoid: 'wall', kWall: 'wall', kRoom: 'floor', kDoor: 'floor', kExit: 'exit'}
+kCellNames = {kVoid: 'void', kWall: 'wall', kRoom: 'floor', kDoor: 'floor', kExit: 'exit'}
 
 class Cell(object):
     HIDDEN = 0
@@ -14,8 +14,8 @@ class Cell(object):
     _pos = None
     _kind = None
     _room = None
-    _item = None
-    _trap = None
+    item = None
+    trap = None
     _neighbors = None
 
     def __init__(self, dungeon, pos, kind = kVoid, room = None):
@@ -51,9 +51,9 @@ class Cell(object):
         return self._kind & kWalkable > 0
 
     def enter(self, player):
-        if self._trap:
-            self._trap.affect(player)
-            self._trap = None
+        if self.trap:
+            self.trap.affect(player)
+            self.trap = None
 
         if self._kind == kExit and player.quest_done:
             player.win()
@@ -87,12 +87,6 @@ class Cell(object):
     def room(self):
         return self._room
 
-    def item(self):
-        return self._item
-
-    def trap(self):
-        return self._trap
-
     def pos(self):
         return self._pos
 
@@ -111,8 +105,8 @@ class Cell(object):
             elif self._kind == kWall:
                 self._room.addToWalls(self)
 
-        if "trap" in kw: self._trap = kw["trap"]
-        if "item" in kw: self._item = kw["item"]
+        if "trap" in kw: self.trap = kw["trap"]
+        if "item" in kw: self.item = kw["item"]
 
 class Visibility (dict):
     def __init__(self, level, default=Cell.HIDDEN):

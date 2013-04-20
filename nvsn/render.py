@@ -3,6 +3,8 @@ import os
 import pyglet
 from pyglet.gl import *
 
+import level
+
 class Tileset (object):
     w = 32
     h = 32
@@ -65,20 +67,25 @@ class LevelRenderer (object):
 
     def build_sprites(self):
         for c in self.level.data():
+            if c._kind == level.kVoid:
+                continue
             self.add_tile(self.sprites, c.name(), c.pos())
 
     def think(self):
         for cell in self.visibility.dirty_list:
+            if cell._kind == level.kVoid:
+                continue
+
             pos = cell.pos()
             vis = self.visibility[cell]
             self.sprites[pos].opacity = self.visibility_types[vis]
 
-            if vis == cell.LIT and (cell.item() or cell.trap()):
-                if cell.item() and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.item().name, pos, self.items_group)
+            if vis == cell.LIT and (cell.item or cell.trap):
+                if cell.item and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.item.name, pos, self.items_group)
 
-                if cell.trap() and cell.trap().owner == self.owner and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.trap().name, pos, self.items_group)
+                if cell.trap and cell.trap.owner == self.owner and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.trap.name, pos, self.items_group)
 
             else:
                 if pos in self.item_sprites:
