@@ -55,6 +55,7 @@ class Player (object):
     MOVING = 1
     DIE = 2
     RESPAWN = 3
+    TRAPPED = 4
 
     def __init__(self, level, visibility, quest, x, y):
         self.level = level
@@ -141,13 +142,16 @@ class Player (object):
             self.dx = 0
             self.dy = 0
             self.alive = True
-            self.state = self.IDLE
             self.level[self.x, self.y].enter(self)
+
+        if not self.wait and self.state:
+            self.state = self.IDLE
 
     def update_visibility(self):
         self.visibility.update_visibility(self.nx, self.ny, cansee=self.alive)
 
     def freeze(self, time):
+        self.state = self.TRAPPED
         self.wait = time
 
     def win(self):

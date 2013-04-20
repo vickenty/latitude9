@@ -33,7 +33,7 @@ class Pit (Trap):
     delay = 120
 
     def affect(self, player):
-        player.freeze(delay)
+        player.freeze(self.delay)
 
 class Mine (Trap):
     name = 'mine'

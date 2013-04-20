@@ -124,6 +124,8 @@ class PlayerRenderer (object):
             self.anims[move] = anim
             self.still[move] = grid[animdef[1]]
 
+        self.trapped = pyglet.resource.image('trapped.png')
+
         self.sprite = pyglet.sprite.Sprite(self.still[0, -1], batch=self.batch, group=self.group)
 
     def think(self):
@@ -138,6 +140,10 @@ class PlayerRenderer (object):
             newanim = self.anims[self.last_move]
         else:
             newanim = self.still[self.last_move]
+
+        if self.player.state == self.player.TRAPPED:
+            newanim = self.trapped
+
         if newanim != self.sprite.image:
             self.sprite.image = newanim
 
