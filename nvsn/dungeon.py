@@ -405,7 +405,8 @@ class Dungeon(level.Level):
             print "".join([f(self._dungeon[y][x]) for x in range(len(self._dungeon[y]))])
 
 def main():
-    dungeon = Dungeon(50, 50, targetRatio = 0.25, seed = None)#, seed=3734095578)#, seed = 4026426881)
+    dungeon = Dungeon(30, 30, targetRatio=0.25)
+    dungeon.generate()
     dungeon.dump()
 
 if __name__ == "__main__":
