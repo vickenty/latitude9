@@ -78,6 +78,10 @@ class AI(object):
             move_to = self.path.pop(0)
             dx = move_to.x - cell.x
             dy = move_to.y - cell.y
+            if abs(dx) > 1 or abs(dy) > 1:
+                # We're no longer on path
+                self.reset()
+                return
             self.player.move(dx, dy)
 
     def reset(self):
@@ -90,7 +94,7 @@ class AI(object):
         tovisit = [((c.x - x)**2 + (c.y - y)**2, c) for c in self.visibility.frontier if c.walkable]
 
         if not tovisit:
-            return
+            return random.choice(self.level.walkables)
 
         tovisit.sort()
         return tovisit[0][1]

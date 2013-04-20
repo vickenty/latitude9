@@ -291,6 +291,7 @@ class Dungeon(level.Level):
         self._buildCorridors()
         self._placeExit()
         self._placeItems()
+        self.walkables = [self.cell(x, y) for x in range(self._width) for y in range(self._height) if self.cell(x, y).walkable]
         #self.dump()
 
     def _buildCorridors(self):
