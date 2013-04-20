@@ -125,17 +125,14 @@ class PlayerRenderer (object):
             self.still[move] = grid[animdef[1]]
 
         self.trapped = pyglet.resource.image('trapped.png')
+        self.ghost = pyglet.resource.image('ghost.png')
 
         self.sprite = pyglet.sprite.Sprite(self.still[0, -1], batch=self.batch, group=self.group)
 
     def think(self):
         if not self.player.alive:
-            self.sprite.opacity = 0
-            return
-        else:
-            self.sprite.opacity = 255
-
-        if self.player.dx or self.player.dy:
+            newanim = self.ghost
+        elif self.player.dx or self.player.dy:
             self.last_move = self.player.dx, self.player.dy
             newanim = self.anims[self.last_move]
         else:
