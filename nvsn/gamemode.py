@@ -36,6 +36,7 @@ class GameMode (mode.Mode):
         self.setup_level()
         self.setup_player()
         self.setup_render()
+        self.setup_music()
 
     def setup_level(self):
         self.level = level.Dummy(20, 20)
@@ -86,6 +87,12 @@ class GameMode (mode.Mode):
                 None)
         self.queue.append(renderer)
 
+    def setup_music(self):
+        self.music_player = pyglet.media.Player()
+        self.music_player.eos_action = self.music_player.EOS_LOOP
+        self.music_player.queue(pyglet.resource.media('capewithpatches2.ogg'))
+        self.music_player.play()
+
     def on_draw(self):
         self.think()
         if not self.window:
@@ -127,7 +134,7 @@ class GameMode (mode.Mode):
         [r.think() for r in self.queue]
 
         if self.player.won:
-            self.app.switch_handler('win')
+            self.app.switch_handler('win', self.music_player)
 
     def safe_call(self, func, *args, **kwargs):
         try:

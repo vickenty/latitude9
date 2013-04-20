@@ -152,7 +152,7 @@ class App(object):
         """
         self.setup_pyglet()
         self.setup_gl()
-        self.switch_handler("game")
+        self.switch_handler("intro")
         self.window.set_visible()
         app.run()
 
