@@ -27,6 +27,7 @@ class Cell(object):
         self.x, self.y = self._pos
         self._kind = kVoid
         self._room = room
+        self.walkable = False
 
     def __str__(self):
         return "<Cell %s, 0x%02x, %s>" % (self._pos, self._kind, self._room)
@@ -50,9 +51,6 @@ class Cell(object):
 
     def name(self):
         return kCellNames.get(self._kind, "cell-%02x" % self._kind)
-
-    def walkable(self):
-        return self._kind & kWalkable > 0
 
     def enter(self, player):
         if self.trap:
@@ -98,6 +96,8 @@ class Cell(object):
         oldKind = self._kind
         if kind is not None:
             self._kind = kind
+
+        self.walkable = self._kind & kWalkable
 
         # I know this means the method can't clear room. I don't need it.
         if room is not None:
@@ -148,7 +148,7 @@ class Visibility (dict):
         for dx, dy in line.draw_line(cx, cy, x, y):
             if x == dx and y == dy:
                 continue
-            if not self.level[dx, dy].walkable():
+            if not self.level[dx, dy].walkable:
                 return False
         return True
 
