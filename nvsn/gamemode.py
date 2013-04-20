@@ -25,6 +25,8 @@ ORDER_TOP = 3
 class GameMode (mode.Mode):
     name = 'game'
     volume = 0.7
+    score = None
+    scoreLabel = None
 
     def __init__(self):
         super(GameMode, self).__init__()
@@ -39,6 +41,9 @@ class GameMode (mode.Mode):
         self.queue = []
 
         self.tileset = render.Tileset.get_default()
+
+        self.score = [0, 0]
+        self.scoreLabel = None
 
         self.setup_level()
         self.setup_player()
@@ -142,8 +147,19 @@ class GameMode (mode.Mode):
         glLoadIdentity()
         self.static_batch.draw()
 
+        if self.scoreLabel is None:
+            self.scoreLabel = pyglet.text.Label(
+                "0 - 0",
+                font_name='DejaVu Sans',
+                font_size=16,
+                x=12,
+                y=self.window.height - 24)
+        self.scoreLabel.text = "%i - %i" % tuple(self.score)
+        self.scoreLabel.draw()
+
         glTranslatef(self.tileset.w * 4, 0, 0)
         self.fps.draw()
+
 
     def setup_view(self):
         w = self.window.width / 2 - self.tileset.w * 2
@@ -172,9 +188,11 @@ class GameMode (mode.Mode):
 
         if self.player.won:
             self.app.switch_handler('win', self.music_player)
+            self.score[0] += 1
 
         if self.player2.won:
             self.app.switch_handler('win', self.music_player, 'You lost!')
+            self.score[1] += 1
 
     def safe_call(self, func, *args, **kwargs):
         try:
