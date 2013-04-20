@@ -85,9 +85,15 @@ class IntroMode (mode.Mode):
                 anchor_x='center',
                 anchor_y='center')
 
+        try:
+            music = pyglet.resource.media('blue_curacao.ogg')
+        except pyglet.resource.ResourceNotFoundException:
+            music = None
+
         self.music_player = pyglet.media.Player()
         self.music_player.eos_action = self.music_player.EOS_LOOP
-        self.music_player.queue(pyglet.resource.media('blue_curacao.ogg'))
+        if music is not None:
+            self.music_player.queue(music)
         self.music_player.play()
         self.frame = 0
         self.switch = None
