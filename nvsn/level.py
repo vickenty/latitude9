@@ -23,6 +23,7 @@ class Cell(object):
 
         self._dungeon = dungeon
         self._pos = tuple(pos)
+        self.x, self.y = self._pos
         self._kind = kVoid
         self._room = room
 
@@ -36,6 +37,8 @@ class Cell(object):
         return self._pos.__hash__()
 
     def __eq__(self, b):
+        if not b:
+            return False
         return self._pos.__eq__(b._pos)
 
     def __cmp__(self, b):

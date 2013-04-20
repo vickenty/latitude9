@@ -375,6 +375,9 @@ class Dungeon(level.Level):
         else:
             return None
 
+    def __getitem__(self, key):
+        return self.cell(*key)
+
     def removeRoom(self, room):
         self._rooms.discard(room)
 

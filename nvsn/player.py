@@ -107,13 +107,13 @@ class Player (object):
         if not cell.item:
             raise NothingHere()
 
+        self.inventory.add(cell.item)
+        cell.item = None
+
         if cell.item.name in self.quest.goals:
             sounds.play('goal')
         else:
             sounds.play('pick')
-
-        self.inventory.add(cell.item)
-        cell.item = None
 
         self.update_quest_status()
 

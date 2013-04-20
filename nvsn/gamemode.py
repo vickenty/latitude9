@@ -11,6 +11,7 @@ import render
 import player
 import control
 import quest
+import ai
 
 ORDER_LEVEL = 0
 ORDER_ITEMS = 1
@@ -55,6 +56,11 @@ class GameMode (mode.Mode):
 
         self.control = control.Keyboard(self.player, self.keys)
 
+        self.player2 = player.Player(self.level, level.Visibility(self.level), self.quest, *self.level.spawnPoint())
+        self.queue.append(self.player2)
+        self.control2 = ai.AI(self.level, self.player2)
+        self.queue.insert(0, self.control2)
+
     def on_key_press(self, sym, mods):
         if sym == pyglet.window.key.P:
             self.app.switch_handler('pause', self.music_player, suspend=True)
@@ -73,6 +79,13 @@ class GameMode (mode.Mode):
         group = self.groups[ORDER_PLAYER]
         renderer = render.PlayerRenderer(
                 self.player,
+                self.tileset,
+                self.scroll_batch,
+                self.groups[ORDER_PLAYER])
+        self.queue.append(renderer)
+
+        renderer = render.PlayerRenderer(
+                self.player2,
                 self.tileset,
                 self.scroll_batch,
                 self.groups[ORDER_PLAYER])
@@ -151,6 +164,9 @@ class GameMode (mode.Mode):
 
         if self.player.won:
             self.app.switch_handler('win', self.music_player)
+
+        if self.player2.won:
+            self.app.switch_handler('win', self.music_player, 'You lost!')
 
     def safe_call(self, func, *args, **kwargs):
         try:
