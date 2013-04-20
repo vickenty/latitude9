@@ -48,7 +48,7 @@ class Inventory (object):
         return set(i.name for i in self.items if i)
 
 class Player (object):
-    walk_delay = 8
+    walk_delay = 16
     death_delay = 16
     respawn_delay = 64
 
