@@ -1,6 +1,7 @@
 import random
 import heapq
 import player
+import level
 
 from dijkstra import Router
 
@@ -67,9 +68,9 @@ class AI(object):
         inv = self.player.inventory
         traps = [idx for idx, item in enumerate(inv.items) if hasattr(item, 'trap_class')]
 
-        use_prob = 0.2 if len(inv.items) < inv.size else 0.4
+        use_prob = 0.1 if len(inv.items) < inv.size or cell._kind == level.kDoor else 0.4
 
-        if cell.item:
+        if cell.item and cell not in self.blacklist:
             if cell.item.name in self.quest.goals or random.uniform(0, 1) < 0.8:
                 try:
                     self.player.pick_up()
