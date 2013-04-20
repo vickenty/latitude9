@@ -307,7 +307,8 @@ class Dungeon(level.Level):
 
     def _placeExit(self):
         chamberCells = filter(lambda c: c.kind() == kRoom, self._chamber.cells())
-        return self._random.choice(chamberCells)
+        self.exit = self._random.choice(chamberCells)
+        self.exit.update(kExit)
 
     def spawnPoint(self):
         possibleCells = filter(lambda c: c.kind() == kRoom, self.data())
