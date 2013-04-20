@@ -1,7 +1,13 @@
 from __future__ import division
 import pyglet
-import mode
+from pyglet.gl import *
 import math
+import random
+from collections import defaultdict
+
+import mode
+import render
+import items
 
 class WinMode (mode.Mode):
     name = 'win'
@@ -51,7 +57,10 @@ class IntroMode (mode.Mode):
 
     def __init__(self):
         super(IntroMode, self).__init__()
-        self.scroll_batch = pyglet.graphics.Batch()
+        self.level_batch = pyglet.graphics.Batch()
+        self.items_batch = pyglet.graphics.Batch()
+
+        self.sprites = defaultdict(list)
 
         self.label1 = pyglet.text.Label(
                 "Nemesis",
@@ -97,12 +106,55 @@ class IntroMode (mode.Mode):
         self.music_player.play()
         self.frame = 0
         self.switch = None
+        self.tileset = render.Tileset.get_default()
+
+        wall = self.tileset['wall']
+        for x in range(0, 50):
+            s = pyglet.sprite.Sprite(wall, x*64, -128, batch=self.level_batch)
+            s.scale = 2
+            self.sprites[x, -2].append(s)
+
+    def disconnect(self):
+        super(IntroMode, self).disconnect()
+        for cell in self.sprites.itervalues():
+            for sprite in cell:
+                sprite.delete()
 
     def on_key_press(self, sym, mods):
         self.pak.text = 'Loading'
         self.switch = self.frame + 60
 
+    def update_bg(self):
+        cy = -self.frame // 64 + 50
+        ay = -self.frame // 64 - 1
+
+        floor = self.tileset['floor']
+        for x in range(0, 50):
+            p = x, cy
+            for sprite in self.sprites[p]:
+                sprite.delete()
+            del self.sprites[p]
+
+            p = x, ay
+            if p not in self.sprites:
+                s = pyglet.sprite.Sprite(floor, batch=self.level_batch)
+                s.x = x * 64
+                s.y = ay * 64
+                s.scale = 2
+                self.sprites[p].append(s)
+
+                if random.uniform(0, 1) < 0.01 and ay < -2:
+                    item = self.tileset[random.choice(items.GoalItem.types * 2 + ['shovel', 'minekit', 'mine', 'trapped'])]
+                    s = pyglet.sprite.Sprite(item, batch=self.items_batch)
+                    s.x = x * 64
+                    s.y = ay * 64
+                    s.scale = 2
+                    self.sprites[p].append(s)
+
     def on_draw(self):
+        self.frame += 1
+        self.update_bg()
+
         self.window.clear()
 
         if self.switch:
@@ -114,7 +166,12 @@ class IntroMode (mode.Mode):
             self.app.switch_handler('game')
             return
 
-        self.frame += 1
+        glLoadIdentity()
+        glTranslatef(0, self.frame, 0)
+        self.level_batch.draw()
+        self.items_batch.draw()
+
+        glLoadIdentity()
         self.pak.x = self.window.width // 2
         self.pak.y = self.window.height // 2
         self.pak.color = (255, 255, 255, int(128 + 64 * math.sin(self.frame / 20)))

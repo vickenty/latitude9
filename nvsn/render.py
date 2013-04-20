@@ -26,8 +26,12 @@ class Tileset (object):
     def __getitem__(self, name):
         return self.tiles[name]
 
+    default = None
     @classmethod
     def get_default(self):
+        if self.default:
+            return self.default
+
         tileset = self()
         tileset.add('wall')
         tileset.add('floor')
@@ -42,14 +46,16 @@ class Tileset (object):
         tileset.add('gem4', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-orange.png', 1, 8)
         tileset.add('gem5', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-pink.png', 1, 8)
         tileset.add('gem6', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-yellow.png', 1, 8)
+        tileset.add('trapped')
 
+        self.default = tileset
         return tileset
 
 class LevelRenderer (object):
     visibility_types = {
         0: 0,
         1: 127,
-        2: 255
+        2: 255,
     }
 
     def __init__(self, owner, level, tileset, batch, tiles_group, items_group):
@@ -93,7 +99,7 @@ class LevelRenderer (object):
         if not group:
             group = self.tiles_group
         tile = self.tileset[name]
-        container[pos] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.tiles_group)
+        container[pos] = sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=group)
         sprite.x = pos[0] * self.tileset.w
         sprite.y = pos[1] * self.tileset.h
 
