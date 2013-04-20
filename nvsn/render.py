@@ -135,8 +135,10 @@ class PlayerRenderer (object):
         self.sprite = pyglet.sprite.Sprite(self.still[0, -1], batch=self.batch, group=self.group)
 
     def think(self):
+        opacity = 255
         if not self.player.alive:
             newanim = self.ghost
+            opacity = 127
         elif self.player.dx or self.player.dy:
             self.last_move = self.player.dx, self.player.dy
             newanim = self.anims[self.last_move]
@@ -148,6 +150,7 @@ class PlayerRenderer (object):
 
         if newanim != self.sprite.image:
             self.sprite.image = newanim
+            self.sprite.opacity = opacity
 
         self.sprite.x = self.player.vx * self.tileset.w
         self.sprite.y = self.player.vy * self.tileset.h
@@ -190,7 +193,7 @@ class InventoryRenderer (object):
         for slot, item in enumerate(self.inventory.items):
 
             if item and slot not in self.sprites:
-                offset = self.tileset.h * (1.5 * slot + 1)
+                offset = self.tileset.h * (1.5 * slot + 0.5)
                 sprites[slot] = self.add_sprite(item.name, offset)
             if not item and slot in self.sprites:
                 sprites[slot].delete()

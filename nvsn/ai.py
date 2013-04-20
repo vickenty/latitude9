@@ -101,7 +101,7 @@ class AI(object):
             return
 
         if not self.router:
-            self.router = Router(cell, self.target)
+            self.router = Router(self.player, cell, self.target)
 
         if not self.path:
             try:

@@ -1,7 +1,8 @@
 import heapq
 
 class Router (object):
-    def __init__(self, start, finish):
+    def __init__(self, owner, start, finish):
+        self.owner = owner
         self.start = start
         self.finish = finish
 
@@ -20,7 +21,7 @@ class Router (object):
 
                 for neigh in cell.neighbors():
                     if neigh not in self.seen and neigh.walkable:
-                        delta = 15 if neigh.trap else 1
+                        delta = 15 if neigh.trap and neigh.trap.owner == self.owner else 1
                         heapq.heappush(self.queue, (cost + delta, neigh, path))
             
 if __name__ == '__main__':
