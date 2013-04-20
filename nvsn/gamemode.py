@@ -69,8 +69,9 @@ class GameMode (mode.Mode):
         self.queue.insert(0, self.control2)
 
     def on_key_press(self, sym, mods):
-        if sym == pyglet.window.key.P:
+        if sym in (pyglet.window.key.P, pyglet.window.key.ESCAPE):
             self.app.switch_handler('pause', self.music_player, suspend=True)
+            return True
         self.safe_call(self.control.on_key_press, sym, mods)
 
     def setup_render(self):

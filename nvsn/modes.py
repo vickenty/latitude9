@@ -198,19 +198,43 @@ class PauseMode (mode.Mode):
             anchor_x='center',
             anchor_y='center')
 
+        self.label2 = pyglet.text.Label(
+            'Press escape to exit, or any other key to resume.',
+            font_name='DejaVu Sans',
+            font_size=16,
+            color=(127,127,127,255),
+            x=15,
+            y=15)
+
         self.frame = 0
+        self.switch = None
 
     def on_draw(self):
         self.frame += 1
+
+        if self.switch:
+            delta = (self.switch - self.frame) / 30
+            self.music_player.volume = 0.1 * delta
+        else:
+            if self.music_player.volume > 0.1:
+                self.music_player.volume -= 0.02
+
+        if self.frame == self.switch:
+            self.music_player.pause()
+            self.app.switch_handler('intro')
+            return
+
         self.label.x = self.window.width // 2
         self.label.y = self.window.height // 2
         self.label.color = (255, 255, 255, int(128 + 64 * math.sin(self.frame / 20)))
 
-        if self.music_player.volume > 0.1:
-            self.music_player.volume -= 0.02
-
         self.window.clear()
         self.label.draw()
+        self.label2.draw()
 
     def on_key_press(self, sym, mods):
-        self.app.resume_handler('game')
+        if sym == pyglet.window.key.ESCAPE:
+            self.switch = self.frame + 30
+        else:
+            self.app.resume_handler('game')
+        return True
