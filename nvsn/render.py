@@ -31,7 +31,6 @@ class Tileset (object):
         tileset.add('floor')
         tileset.add('shovel')
         tileset.add('pit')
-        tileset.add('trap')
         tileset.add('exit')
         tileset.add('mine')
         tileset.add('minekit')
