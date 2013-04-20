@@ -19,6 +19,7 @@ ORDER_TOP = 3
 
 class GameMode (mode.Mode):
     name = 'game'
+    volume = 0.7
 
     def __init__(self):
         super(GameMode, self).__init__()
@@ -55,6 +56,8 @@ class GameMode (mode.Mode):
         self.control = control.Keyboard(self.player, self.keys)
 
     def on_key_press(self, sym, mods):
+        if sym == pyglet.window.key.P:
+            self.app.switch_handler('pause', self.music_player, suspend=True)
         self.safe_call(self.control.on_key_press, sym, mods)
 
     def setup_render(self):
@@ -94,12 +97,16 @@ class GameMode (mode.Mode):
         self.music_player = pyglet.media.Player()
         self.music_player.eos_action = self.music_player.EOS_LOOP
         self.music_player.queue(pyglet.resource.media('capewithpatches2.ogg'))
+        self.music_player.volume = self.volume
         self.music_player.play()
 
     def on_draw(self):
         self.think()
         if not self.window:
             return
+
+        if self.music_player.volume < self.volume:
+            self.music_player.volume += 0.05
 
         self.window.clear()
         self.setup_view()

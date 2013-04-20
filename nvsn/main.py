@@ -91,7 +91,6 @@ class App(object):
         if suspend:
             self.suspend_handler()
         self.handler = handler
-        self.handler = self.suspended.pop(mode)
 
     def clear_handler(self):
         """Clear the current handler, if any.

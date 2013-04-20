@@ -118,3 +118,36 @@ class IntroMode (mode.Mode):
         self.label3.draw()
         self.pak.draw()
 
+class PauseMode (mode.Mode):
+    name = 'pause'
+
+    def __init__(self, music_player):
+        super(PauseMode, self).__init__()
+
+        self.music_player = music_player
+
+        self.label = pyglet.text.Label(
+            'PAUSED',
+            font_name='DejaVu Sans',
+            font_size=32,
+            x=0,
+            y=0,
+            anchor_x='center',
+            anchor_y='center')
+
+        self.frame = 0
+
+    def on_draw(self):
+        self.frame += 1
+        self.label.x = self.window.width // 2
+        self.label.y = self.window.height // 2
+        self.label.color = (255, 255, 255, int(128 + 64 * math.sin(self.frame / 20)))
+
+        if self.music_player.volume > 0.1:
+            self.music_player.volume -= 0.02
+
+        self.window.clear()
+        self.label.draw()
+
+    def on_key_press(self, sym, mods):
+        self.app.resume_handler('game')
