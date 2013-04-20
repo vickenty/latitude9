@@ -65,23 +65,21 @@ class LevelRenderer (object):
         self.build_sprites()
 
     def build_sprites(self):
-        for x in range(0, self.level.w):
-            for y in range(0, self.level.h):
-                cell = self.level[x, y]
-                self.add_tile(self.sprites, cell.name, (x, y))
+        for c in self.level.data():
+            self.add_tile(self.sprites, c.name(), c.pos())
 
     def think(self):
         for cell in self.visibility.dirty_list:
-            pos = cell.x, cell.y
+            pos = cell.pos()
             vis = self.visibility[cell]
             self.sprites[pos].opacity = self.visibility_types[vis]
 
-            if vis == cell.LIT and (cell.item or cell.trap):
-                if cell.item and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.item.name, pos, self.items_group)
+            if vis == cell.LIT and (cell.item() or cell.trap()):
+                if cell.item() and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.item().name, pos, self.items_group)
 
-                if cell.trap and cell.trap.owner == self.owner and pos not in self.item_sprites:
-                    self.add_tile(self.item_sprites, cell.trap.name, pos, self.items_group)
+                if cell.trap() and cell.trap().owner == self.owner and pos not in self.item_sprites:
+                    self.add_tile(self.item_sprites, cell.trap().name, pos, self.items_group)
 
             else:
                 if pos in self.item_sprites:

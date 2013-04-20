@@ -82,7 +82,7 @@ class Player (object):
         nx = self.x + dx
         ny = self.y + dy
 
-        if self.level[nx, ny].walkable:
+        if self.level[nx, ny].walkable():
             self.state = self.MOVING
 
             # delta, used to animate movement
@@ -190,5 +190,5 @@ class Player (object):
         for x in level.clamped_range(self.x, radius, 0, self.level.w):
             for y in level.clamped_range(self.y, radius, 0, self.level.h):
                 cell = self.level[x, y]
-                if cell.walkable and not (cell.item or cell.trap):
+                if cell.walkable() and not (cell.item or cell.trap):
                     yield cell

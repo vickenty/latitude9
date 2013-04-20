@@ -6,6 +6,7 @@ import mode
 import config
 
 import level
+import dungeon
 import render
 import player
 import control
@@ -39,14 +40,16 @@ class GameMode (mode.Mode):
         self.setup_music()
 
     def setup_level(self):
-        self.level = level.Dummy(20, 20)
+        self.level = dungeon.Dungeon(50, 50, targetRatio = 0.25, seed = 1818238163)
         self.level.generate()
 
         self.quest = quest.Quest.new_random()
 
     def setup_player(self):
         visibility = level.Visibility(self.level)
-        self.player = player.Player(self.level, visibility, self.quest, 5, 5)
+        spawnPoint = self.level.spawnPoint()
+
+        self.player = player.Player(self.level, visibility, self.quest, spawnPoint[0], spawnPoint[1])
         self.queue.append(self.player)
 
         self.control = control.Keyboard(self.player, self.keys)
