@@ -12,6 +12,7 @@ import player
 import control
 import quest
 import ai
+import sounds
 
 ORDER_LEVEL = 0
 ORDER_ITEMS = 1
@@ -172,4 +173,5 @@ class GameMode (mode.Mode):
         try:
             return func(*args, **kwargs)
         except player.InventoryError as err:
+            sounds.play('err')
             print err.__doc__
