@@ -1,5 +1,7 @@
 from __future__ import division
 
+import random
+
 import pyglet
 from pyglet.gl import *
 import mode
