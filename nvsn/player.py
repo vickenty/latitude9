@@ -1,6 +1,7 @@
 from __future__ import division
 import random
 from math import sqrt
+import sounds
 
 import level
 
@@ -105,6 +106,11 @@ class Player (object):
 
         if not cell.item:
             raise NothingHere()
+
+        if cell.item.name in self.quest.goals:
+            sounds.play('goal')
+        else:
+            sounds.play('pick')
 
         self.inventory.add(cell.item)
         cell.item = None
