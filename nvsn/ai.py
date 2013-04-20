@@ -1,4 +1,6 @@
 import random
+import heapq
+import player
 
 from dijkstra import Router
 
@@ -13,6 +15,9 @@ class AI(object):
         self.target_item = None
         self.router = None
         self.path = None
+        self.blacklist = set()
+        self.blacklist_queue = []
+        self.frame = 0
 
     def check_goal_items(self):
         if self.target_item:
@@ -31,7 +36,11 @@ class AI(object):
         x = self.player.x
         y = self.player.y
 
-        items = [((c.x - x)**2 + (c.y - y)**2, c, i) for c, i in self.visibility.items.iteritems() if i.name in self.quest.goals]
+        items = []
+        items = [((c.x - x)**2 + (c.y - y)**2, c, i)
+                for c, i in self.visibility.items.iteritems()
+                if (i.name in self.quest.goals or random.uniform(0, 1) < 0.5) and c not in self.blacklist]
+
         if not items:
             return None, None
 
@@ -40,14 +49,40 @@ class AI(object):
 
         return i, c
 
+    blacklist_time = 600
+
     def think(self):
+        self.frame += 1
+
         if self.player.state:
             return
 
+        while self.blacklist_queue and self.blacklist_queue[0][0] < self.frame:
+            _, cell = heapq.heappop(self.blacklist_queue)
+            self.blacklist.remove(cell)
+            print 'remove', cell
+
         cell = self.level[self.player.x, self.player.y]
 
-        if cell.item and cell.item.name in self.quest.goals:
-            self.player.pick_up()
+        inv = self.player.inventory
+        traps = [idx for idx, item in enumerate(inv.items) if hasattr(item, 'trap_class')]
+
+        use_prob = 0.2 if len(inv.items) < inv.size else 0.4
+
+        if cell.item:
+            if cell.item.name in self.quest.goals or random.uniform(0, 1) < 0.8:
+                try:
+                    self.player.pick_up()
+                except player.InventoryError:
+                    heapq.heappush(self.blacklist_queue, (self.frame + self.blacklist_time, cell))
+                    self.blacklist.add(cell)
+                    print 'blacklist', cell
+
+        elif traps and random.uniform(0, 1) < use_prob:
+            try:
+                self.player.use_item(random.choice(traps))
+            except player.InventoryError:
+                pass
 
         if cell == self.target:
             self.reset()

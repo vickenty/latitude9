@@ -20,7 +20,8 @@ class Router (object):
 
                 for neigh in cell.neighbors():
                     if neigh not in self.seen and neigh.walkable:
-                        heapq.heappush(self.queue, (cost + 1, neigh, path))
+                        delta = 15 if neigh.trap else 1
+                        heapq.heappush(self.queue, (cost + delta, neigh, path))
             
 if __name__ == '__main__':
     from level import Dummy
