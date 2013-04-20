@@ -12,7 +12,7 @@ class TrapItem (Item):
 class GoalItem (Item):
     """Droppable item."""
 
-    types = ['%s%d' % (kind, seq) for seq in range(1, 4) for kind in ['flower', 'gem']]
+    types = ['gem%d' % (seq,) for seq in range(1, 7)]
 
     def __init__(self, name):
         self.name = name

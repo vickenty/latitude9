@@ -4,14 +4,16 @@ import mode
 class WinMode (mode.Mode):
     name = 'win'
 
-    def __init__(self):
+    def __init__(self, text=None):
         super(WinMode, self).__init__()
+        self.text = text
 
     def connect(self, app):
         super(WinMode, self).connect(app)
 
         self.batch = pyglet.graphics.Batch()
-        self.label = pyglet.text.Label("You won!", 
+        self.label = pyglet.text.Label(
+            self.text or "You won!",
             font_size=48,
             x=self.window.width/2,
             y=self.window.height/2,

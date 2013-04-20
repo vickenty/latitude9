@@ -4,15 +4,21 @@ import pyglet
 from pyglet.gl import *
 
 class Tileset (object):
-    w = 16
-    h = 16
+    w = 32
+    h = 32
 
     def __init__(self):
         self.tiles = {}
 
-    def add(self, name):
-        texture = pyglet.resource.image(name + '.png')
+    def add(self, name, fname=None, rows=None, cols=None):
+        fname = fname or (name + '.png')
+        texture = pyglet.resource.image(fname)
         glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        if rows and cols:
+            grid = pyglet.image.ImageGrid(texture, rows, cols)
+            texture = pyglet.image.Animation([
+                pyglet.image.AnimationFrame(grid[i], 0.1)
+                for i in range(rows * cols)])
         self.tiles[name] = texture
 
     def __getitem__(self, name):
@@ -23,19 +29,18 @@ class Tileset (object):
         tileset = self()
         tileset.add('wall')
         tileset.add('floor')
-        tileset.add('player')
         tileset.add('shovel')
         tileset.add('pit')
         tileset.add('trap')
-        tileset.add('gem1')
-        tileset.add('gem2')
-        tileset.add('gem3')
-        tileset.add('flower1')
-        tileset.add('flower2')
-        tileset.add('flower3')
         tileset.add('exit')
         tileset.add('mine')
         tileset.add('minekit')
+        tileset.add('gem1', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-blue.png', 1, 8)
+        tileset.add('gem2', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-green.png', 1, 8)
+        tileset.add('gem3', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-grey.png', 1, 8)
+        tileset.add('gem4', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-orange.png', 1, 8)
+        tileset.add('gem5', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-pink.png', 1, 8)
+        tileset.add('gem6', 'crystal-qubodup-ccby3/crystal-qubodup-ccby3-32-yellow.png', 1, 8)
 
         return tileset
 
@@ -122,6 +127,12 @@ class PlayerRenderer (object):
         self.sprite = pyglet.sprite.Sprite(self.still[0, -1], batch=self.batch, group=self.group)
 
     def think(self):
+        if not self.player.alive:
+            self.sprite.opacity = 0
+            return
+        else:
+            self.sprite.opacity = 255
+
         if self.player.dx or self.player.dy:
             self.last_move = self.player.dx, self.player.dy
             newanim = self.anims[self.last_move]
@@ -150,8 +161,7 @@ class QuestRenderer (object):
             tile = self.tileset[name]
             sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
             sprite.x = self.tileset.w
-            sprite.y = self.tileset.h * (3 * slot + 20)
-            sprite.scale = 2
+            sprite.y = self.tileset.h * (1.5 * slot + 10)
             self.sprites.append(sprite)
 
     def think(self):
@@ -172,7 +182,7 @@ class InventoryRenderer (object):
         for slot, item in enumerate(self.inventory.items):
 
             if item and slot not in self.sprites:
-                offset = self.tileset.h * (3 * slot + 1)
+                offset = self.tileset.h * (1.5 * slot + 1)
                 sprites[slot] = self.add_sprite(item.name, offset)
             if not item and slot in self.sprites:
                 sprites[slot].delete()
@@ -183,7 +193,6 @@ class InventoryRenderer (object):
         sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
         sprite.x = self.tileset.w
         sprite.y = offset
-        sprite.scale = 2
         return sprite
 
 if __name__ == '__main__':
