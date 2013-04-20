@@ -99,14 +99,37 @@ class PlayerRenderer (object):
         self.tileset = tileset
         self.batch = batch
         self.group = group
+        self.last_move = (0, -1)
+        self.anims = {}
+        self.still = {}
 
         self.setup_sprites()
 
+    anim_defs = [
+        ((0, -1), [9, 10, 11]),
+        ((-1, 0), [6, 7, 8]),
+        ((1, 0), [3, 4, 5]),
+        ((0, 1), [0, 1, 2]),
+    ]
+
     def setup_sprites(self):
-        tile = self.tileset['player']
-        self.sprite = pyglet.sprite.Sprite(tile, batch=self.batch, group=self.group)
+        grid = pyglet.image.ImageGrid(pyglet.resource.image('player1.png'), 4, 3)
+        for move, animdef in self.anim_defs:
+            anim = pyglet.image.Animation([pyglet.image.AnimationFrame(grid[frame], 0.05) for frame in animdef])
+            self.anims[move] = anim
+            self.still[move] = grid[animdef[1]]
+
+        self.sprite = pyglet.sprite.Sprite(self.still[0, -1], batch=self.batch, group=self.group)
 
     def think(self):
+        if self.player.dx or self.player.dy:
+            self.last_move = self.player.dx, self.player.dy
+            newanim = self.anims[self.last_move]
+        else:
+            newanim = self.still[self.last_move]
+        if newanim != self.sprite.image:
+            self.sprite.image = newanim
+
         self.sprite.x = self.player.vx * self.tileset.w
         self.sprite.y = self.player.vy * self.tileset.h
 
