@@ -1,5 +1,22 @@
-latitude9
-=========
+Nemesis vs Nemesis
+==================
+
+Your goal is to collect specific set of gems and escape level before your nemesis does.
+
+Exit is marked with a white cross.
+
+Items you need to collect are displayed at the left side of the screen. When you pick the right item,
+it will become brighter.
+
+Use traps to defeat your opponent.
+
+Controls
+--------
+Arrow keys to walk.
+
+'Z' to pick things up.
+
+'1' - '6' to drop gems and place traps.
 
 Credits
 -------
