@@ -15,6 +15,7 @@ import control
 import quest
 import ai
 import sounds
+import digger
 
 ORDER_LEVEL = 0
 ORDER_ITEMS = 1
@@ -45,12 +46,11 @@ class GameMode (mode.Mode):
         self.setup_music()
 
     def setup_level(self):
-        seeds30 = [ 312111099, 2473547647, 2040891162, 1604295412, 2378130640,
-                   4151638846,  604800453, 4128886483, 2315607380, 3412468423,
-                   2563009642, 2292535294,  921793281, 3089564559, 1097001202,
-                   1375387785, 3477381231, 3821048307, 4156639135, 4290767310]
-        self.level = dungeon.Dungeon(30, 30, targetRatio = 0.25, seed = random.choice(seeds30))
-        self.level.generate()
+        generator = digger.Digger()
+        generator.build()
+        data, size = generator.carve()
+        self.level = dungeon.Dungeon2(size[0] + 1, size[1] + 1, targetRatio = 0.25)
+        self.level.generate(data)
 
         self.quest = quest.Quest.new_random()
 

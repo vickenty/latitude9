@@ -307,8 +307,7 @@ class Dungeon(level.Level):
                 src, dst = self._findUnreachableRoom(reachables, unreachables)
 
     def _placeExit(self):
-        chamberCells = filter(lambda c: c.kind() == kRoom, self._chamber.cells())
-        self.exit = self._random.choice(chamberCells)
+        self.exit = self.cell(*self.spawnPoint())
         self.exit.update(kExit)
 
     def spawnPoint(self):
@@ -404,8 +403,17 @@ class Dungeon(level.Level):
         for y in range(len(self._dungeon)):
             print "".join([f(self._dungeon[y][x]) for x in range(len(self._dungeon[y]))])
 
+class Dungeon2 (Dungeon):
+    def generate(self, data):
+        for x, y in data:
+            self.cell(x, y).update(kRoom)
+
+        self._placeExit()
+        self._placeItems()
+        self.walkables = [self.cell(x, y) for x in range(self._width) for y in range(self._height) if self.cell(x, y).walkable]
+
 def main():
-    dungeon = Dungeon(30, 30, targetRatio=0.25)
+    dungeon = Dungeon(50, 50, targetRatio = 0.25, seed = None)#, seed=3734095578)#, seed = 4026426881)
     dungeon.generate()
     dungeon.dump()
 
