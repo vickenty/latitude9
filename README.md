@@ -10,3 +10,5 @@ Crystal sprites: Qubodup, http://opengameart.org/content/rotating-crystal-animat
 Intro music: Blue Curacao by Jester, http://modarchive.org/index.php?request=view_by_moduleid&query=103039
 
 Game music: Cape with Patches by FearsomeDragonfly, http://modarchive.org/index.php?request=view_by_moduleid&query=167533
+
+Fonts: DejaVu, see data/fonts/copyright.
