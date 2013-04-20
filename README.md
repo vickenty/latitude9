@@ -18,6 +18,8 @@ Arrow keys to walk.
 
 '1' - '6' to drop gems and place traps.
 
+P or ESCAPE to pause the game.
+
 Credits
 -------
 Character sprites: ESPRI-Q, http://espri-q.jugem.jp/?cid=4
