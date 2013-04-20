@@ -94,9 +94,15 @@ class GameMode (mode.Mode):
         self.queue.append(renderer)
 
     def setup_music(self):
+        try:
+            music = pyglet.resource.media('capewithpatches2.ogg')
+        except:
+            music = None
+
         self.music_player = pyglet.media.Player()
         self.music_player.eos_action = self.music_player.EOS_LOOP
-        self.music_player.queue(pyglet.resource.media('capewithpatches2.ogg'))
+        if music is not None:
+            self.music_player.queue(music)
         self.music_player.volume = self.volume
         self.music_player.play()
 
