@@ -67,15 +67,10 @@ class LevelRenderer (object):
 
     def build_sprites(self):
         for c in self.level.data():
-            if c._kind == level.kVoid:
-                continue
             self.add_tile(self.sprites, c.name(), c.pos())
 
     def think(self):
         for cell in self.visibility.dirty_list:
-            if cell._kind == level.kVoid:
-                continue
-
             pos = cell.pos()
             vis = self.visibility[cell]
             self.sprites[pos].opacity = self.visibility_types[vis]

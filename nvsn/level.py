@@ -1,9 +1,10 @@
 import random
 import items
+import line
 
 kVoid, kWall, kRoom, kDoor, kExit = constants = [0] + [1 << i for i in range(4)]
 kWalkable = kRoom | kDoor | kExit
-kCellNames = {kVoid: 'void', kWall: 'wall', kRoom: 'floor', kDoor: 'floor', kExit: 'exit'}
+kCellNames = {kVoid: 'wall', kWall: 'wall', kRoom: 'floor', kDoor: 'floor', kExit: 'exit'}
 
 class Cell(object):
     HIDDEN = 0
@@ -129,7 +130,7 @@ class Visibility (dict):
                 cell = self.level[x, y]
                 d2 = (x - cx)**2 + (y - cy)**2
                 if cell:
-                    if d2 <= r2:
+                    if d2 <= r2 and self.check_line(cell.x, cell.y, cx, cy):
                         self[cell] = cell.LIT if cansee else cell.MEMORY
                         self.update_frontier(cell)
                         if cell.item:
@@ -142,6 +143,14 @@ class Visibility (dict):
                             del self.items[cell]
 
                     self.dirty_list.append(cell)
+
+    def check_line(self, x, y, cx, cy):
+        for dx, dy in line.draw_line(cx, cy, x, y):
+            if x == dx and y == dy:
+                continue
+            if not self.level[dx, dy].walkable():
+                return False
+        return True
 
     def update_frontier(self, cell):
         front = any(self[n] == cell.HIDDEN for n in cell.neighbors())
@@ -161,12 +170,6 @@ class Level (object):
     def __init__(self, w, h):
         self.w = w
         self.h = h
-
-    def __getitem__(self, key):
-        return None
-
-    def data(self):
-        return None
 
     def offset(self, x, y):
         return y * self.w + x
