@@ -42,7 +42,8 @@ class GameMode (mode.Mode):
 
         self.tileset = render.Tileset.get_default()
 
-        self.score = [0, 0]
+        if GameMode.score is None:
+            GameMode.score = [0, 0]
         self.scoreLabel = None
 
         self.setup_level()
@@ -154,7 +155,7 @@ class GameMode (mode.Mode):
                 font_size=16,
                 x=12,
                 y=self.window.height - 24)
-        self.scoreLabel.text = "%i - %i" % tuple(self.score)
+        self.scoreLabel.text = "%i - %i" % tuple(GameMode.score)
         self.scoreLabel.draw()
 
         glTranslatef(self.tileset.w * 4, 0, 0)
@@ -188,11 +189,11 @@ class GameMode (mode.Mode):
 
         if self.player.won:
             self.app.switch_handler('win', self.music_player)
-            self.score[0] += 1
+            GameMode.score[0] += 1
 
         if self.player2.won:
             self.app.switch_handler('win', self.music_player, 'You lost!')
-            self.score[1] += 1
+            GameMode.score[1] += 1
 
     def safe_call(self, func, *args, **kwargs):
         try:
