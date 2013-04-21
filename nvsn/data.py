@@ -14,7 +14,7 @@ import config
 from common import *
 from constants import *
 
-resource.path = [os.path.join("data", subdir) for subdir in ['fonts', 'images', 'music', 'sounds']]
+resource.path = ["data/" + subdir for subdir in ['fonts', 'images', 'music', 'sounds']]
 resource.reindex()
 
 resource.add_font('DejaVuSans.ttf')
